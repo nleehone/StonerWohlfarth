@@ -70,7 +70,7 @@ def find_magnetization(func, deriv, second_deriv, previous_magnetization, min_x,
         if check_root_is_minimum(root, deriv, second_deriv, resolution=resolution, args=args):
             minima.append(root)
 
-    diff = previous_magnetization - cos(minima)
+    diff = abs(previous_magnetization - cos(minima))
     magnetization = min(zip(diff, cos(minima)))
 
     return magnetization
