@@ -55,29 +55,23 @@ def check_root_is_minimum(root, deriv, second_deriv, resolution=0.00001, args=()
     return False
 
 
-def find_magnetization(func, deriv, second_deriv, previous_magnetization, min_x, max_x, x_steps, descending_field=True, resolution=0.0001, args=()):
+def find_magnetization(func, deriv, second_deriv, previous_magnetization, min_x, max_x, x_steps, resolution=0.0001, args=()):
     """Determine the magnetization from the energy function and its first and second derivatives.
 
     Params:
       func (function): The energy function. The function should take the form func(x, arg1, arg2, ...) where x is the variable that we will be minimizing against.
       deriv (function): The derivative of the energy function. The function should take the form func(x, arg1, arg2, ...) where x is the variable that we will be minimizing agains.
       second_deriv (function): The second derivative of the energy function. The function should take the form func(x, arg1, arg2, ...) where x is the variable that we will be minimizing agains.
-      descending_field (boolean): The direction of the hysteresis loop. We need to know this since we only allow the magnetization to decrease if we are decreasing field, and the magnetization to increase if we are increasing field.
       args (tuple): The arguments to pass to the energy function and its derivatives
     """
     possible_minima = find_roots(deriv, min_x, max_x, x_steps, args)
     minima = []
     for root in possible_minima:
         if check_root_is_minimum(root, deriv, second_deriv, resolution=resolution, args=args):
-            if descending_field and cos(root) <= previous_magnetization:
-                minima.append(root)
-            elif cos(root) >= previous_magnetization:
-                minima.append(root)
+            minima.append(root)
 
-    if descending_field:
-        magnetization = max(cos(minima))
-    else:
-        magnetization = min(cos(minima))
+    diff = previous_magnetization - cos(minima)
+    magnetization = min(zip(diff, cos(minima)))
 
     return magnetization
 
@@ -100,13 +94,13 @@ def hysteresis_loop(h_min, h_max, num_h_points, energy_func, derivative, second_
     Returns:
       np.ndarray: The hysteresis loop as (h, m) pairs
     """
-    h_values = np.linspace(h_min, h_max, num_h_points)
+    h_values = np.linspace(h_max, h_min, num_h_points)
 
     mh_curve = []
     mag = -1
 
     for h in h_values:
-        mag = find_magnetization(energy_func, derivative, second_derivative, mag, min_x, max_x, x_steps, descending_field=False, args=((h,) + args))
+        _, mag = find_magnetization(energy_func, derivative, second_derivative, mag, min_x, max_x, x_steps, args=((h,) + args))
         mh_curve.append((h, mag))
 
     return np.array(mh_curve)
