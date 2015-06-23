@@ -83,6 +83,23 @@ def find_magnetization(func, deriv, second_deriv, previous_magnetization, min_x,
 
 
 def hysteresis_loop(h_min, h_max, num_h_points, energy_func, derivative, second_derivative, min_x=-pi, max_x=pi, x_steps=50, args=()):
+    """Calculate the hysteresis loop for the Stoner Wohlfarth model
+
+    Params:
+      h_min (float): Minimum field
+      h_max (float): Maximum field
+      num_h_points (int): Number of field points
+      energy_func (function):
+      derivative (function):
+      second_derivative (function):
+      min_x (float): Minimum value in which to search for roots
+      max_x (float): Maximum value in which to search for roots
+      x_steps (int): Number of trials to do between [min_x, max_x] for finding roots
+      args (tuple): Extra arguments that will be passed to the energy function and its derivatives
+
+    Returns:
+      np.ndarray: The hysteresis loop as (h, m) pairs
+    """
     h_values = np.linspace(h_min, h_max, num_h_points)
 
     mh_curve = []
