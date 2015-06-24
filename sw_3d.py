@@ -99,13 +99,23 @@ def hysteresis_loop(H, H_dir, Ku_dir, hs, energy_func, derivative, second_deriva
     # Create the transformation matrix that will allow us to convert from problem space into xyz coords
     H_dir = np.array(H_dir)
     Ku_dir = np.array(Ku_dir)
-    v_dir = np.cross(H_dir, Ku_dir)
+    
+    # If the two vectors are parallel then we cannot define the cross product. 
+    if np.all(H_dir == Ku_dir):
+        # Just use the 'up' vector (0, 0, 1) or the 'left' vector (1, 0, 0)
+        if np.all(H_dir == [0, 0, 1]):
+            v_dir = np.cross(H_dir, [1, 0, 0])
+        else:
+            v_dir = np.cross(H_dir, [0, 0, 1])
+    else:
+        v_dir = np.cross(H_dir, Ku_dir)
+        
     v_dir = v_dir/np.linalg.norm(v_dir)
     Kp_dir = np.cross(v_dir, H_dir)
     Kp_dir = Kp_dir/np.linalg.norm(Kp_dir)
     
     U = np.array([v_dir, H_dir, Kp_dir]).T
-    
+
     # Alpha is the angle between Ku and H
     alpha = np.arccos(np.dot(Ku_dir, H_dir))
     
