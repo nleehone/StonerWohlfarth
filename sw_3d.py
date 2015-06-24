@@ -107,7 +107,7 @@ def hysteresis_loop(H, H_dir, Ku_dir, hs, energy_func, derivative, second_deriva
     U = np.array([v_dir, H_dir, Kp_dir]).T
     
     # Alpha is the angle between Ku and H
-    alpha = np.dot(Ku_dir, H_dir)
+    alpha = np.arccos(np.dot(Ku_dir, H_dir))
     
     # Alpha prime is the angle between Kshape and H
     alpha_prime = alpha#np.dot(Kshape_dir, H_dir)
