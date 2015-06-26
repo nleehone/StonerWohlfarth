@@ -3,7 +3,8 @@ import numpy as np
 import scipy.optimize
 from numpy import sin, cos, abs, pi
 import matplotlib.pyplot as plt
-
+from mpl_toolkits.mplot3d import Axes3D
+from autodiff import gradient, function
 
 def find_roots(func, min_x, max_x, x_steps, args=()):
     """Find the roots of a function.
@@ -149,3 +150,58 @@ def hysteresis_loop_anisotrop_distribution(H, H_dir, K_dirs, hs, energy_func, de
         else:
             loops.append(loop)
     return loops
+
+
+def plot_direction_distribution(directions):
+    # First make sure that the directions are normalized
+    dirs = np.array([v/np.linalg.norm(v) for v in directions])
+
+    fig = plt.figure(figsize=(16,12))
+    ax = fig.add_subplot(121, projection='3d')
+    ax.set_aspect('equal')
+
+    # Make a sphere that has slightly smaller radius that 1 unit
+    u = np.linspace(0, 2*pi, 100)
+    v = np.linspace(0, pi, 100)
+    x = 0.95 * np.outer(np.cos(u), np.sin(v))
+    y = 0.95 * np.outer(np.sin(u), np.sin(v))
+    z = 0.95 * np.outer(np.ones(np.size(u)), np.cos(v))
+    ax.plot_surface(x, y, z, color='w')
+
+    # Plot the directions on the sphere
+    ax.scatter(dirs[:,0], dirs[:,1], dirs[:,2], color='k', s=1)
+
+    ax.azim = 0
+    ax.elev = 0
+
+    ax.set_xlim(-1.1, 1.1)
+    ax.set_ylim(-1.1, 1.1)
+    ax.set_zlim(-1.1, 1.1)
+
+    # Draw a second copy but this time looking from above
+    ax = fig.add_subplot(122, projection='3d')
+    ax.set_aspect('equal')
+
+    ax.plot_surface(x, y, z, color='w')
+
+    # Plot the directions on the sphere
+    ax.scatter(dirs[:,0], dirs[:,1], dirs[:,2], color='k', s=1)
+
+    ax.azim = 0
+    ax.elev = 90
+
+    ax.set_xlim(-1.1, 1.1)
+    ax.set_ylim(-1.1, 1.1)
+    ax.set_zlim(-1.1, 1.1)
+
+    plt.tight_layout()
+    plt.subplots_adjust(wspace=-0.3)
+    plt.show()
+
+    return fig
+
+
+
+
+
+
