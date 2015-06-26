@@ -133,3 +133,19 @@ def hysteresis_loop(H, H_dir, Ku_dir, hs, energy_func, derivative, second_deriva
         mh_curve.append(vals)
 
     return np.array(mh_curve)
+
+def hysteresis_loop_anisotrop_distribution(H, H_dir, K_dirs, hs, energy_func, derivative, second_derivative, min_x=-pi, max_x=pi, x_steps=50, args=()):
+    loops = []
+    for k_dir in K_dirs:
+        try:
+            loop = hysteresis_loop(H, H_dir, k_dir, hs, energy_func, derivative, second_derivative, min_x=min_x, max_x=max_x, x_steps=x_steps, args=args)
+        except KeyboardInterrupt:
+            # Make sure we can exit out of the computation
+            break
+        except Exception as e:
+            # Catch any other exceptions, print them, but allow the computation to continue
+            print(e.message, e.args)
+            continue
+        else:
+            loops.append(loop)
+    return loops
