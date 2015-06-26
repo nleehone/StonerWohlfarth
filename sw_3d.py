@@ -135,7 +135,7 @@ def hysteresis_loop(H, H_dir, Ku_dir, hs, energy_func, derivative, second_deriva
 
     return np.array(mh_curve)
 
-def hysteresis_loop_anisotrop_distribution(H, H_dir, K_dirs, hs, energy_func, derivative, second_derivative, min_x=-pi, max_x=pi, x_steps=50, args=()):
+def hysteresis_loop_anisotropy_distribution(H, H_dir, K_dirs, hs, energy_func, derivative, second_derivative, min_x=-pi, max_x=pi, x_steps=50, args=()):
     loops = []
     for k_dir in K_dirs:
         try:
@@ -199,9 +199,3 @@ def plot_direction_distribution(directions):
     plt.show()
 
     return fig
-
-
-
-
-
-
