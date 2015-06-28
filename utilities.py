@@ -1,6 +1,7 @@
 import numpy as np
 from numpy import sin, cos, abs, pi
 import scipy as sp
+import matplotlib.pyplot as plt
 
 
 def plot_direction_distribution(directions):
