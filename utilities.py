@@ -4,6 +4,51 @@ import scipy as sp
 import matplotlib.pyplot as plt
 
 
+def plot_surface(surface_func, gradient_func, x_min, x_max, y_min, y_max, length=1, args=()):
+    """Plot a surface in 3d so that we can see what it looks like.
+
+    Params:
+      surface_func (function): Function that describes the surface
+      gradient_func (function): Function that describes the gradient of the surface
+      x_min (float): The minimum value to plot on the x-axis
+      x_max (float): The maximum value to plot on the x-axis
+      y_min (float): The minimum value to plot on the y-axis
+      y_max (float): The maximum value to plot on the y-axis
+    """
+    fig = plt.figure(figsize=(12,8))
+    ax = fig.add_subplot(121, projection='3d')
+
+    x,y = np.meshgrid(np.linspace(x_min, x_max, 100), np.linspace(y_min, y_max, 100))
+    z = []
+    for x1,y1 in zip(x.ravel(), y.ravel()):
+        z.append(surface_func(x1, y1))
+    z = np.array(z)
+    z = z.reshape((x.shape))
+
+    ax.plot_surface(x, y, z, rstride=10, cstride=10, color='w')
+
+    x,y = np.meshgrid(np.linspace(x_min, x_max, 10), np.linspace(y_min, y_max, 10))
+    z = []
+    for x1,y1 in zip(x.ravel(), y.ravel()):
+        z.append(surface_func(x1, y1))
+    z = np.array(z)
+    z = z.reshape((x.shape))
+
+    gz = []
+    for x1,y1,z1 in zip(x.ravel(), y.ravel(), np.ones((len(x), len(y))).ravel()):
+        gz.append(-np.array(gradient_func(x1, y1, z1)))
+    gz = np.array(gz)
+    gz = gz.reshape(x.shape + (3,))
+    print(z.shape)
+    print(x.shape)
+    print(gz.shape)
+    ax.quiver(x, y, z, gz[:,:,0], gz[:,:,1], gz[:,:,2], length=length)#, pivot='tail')
+
+    ax.set_zlim(-4.5,4.5)
+    plt.tight_layout()
+    return fig
+
+
 def plot_direction_distribution(directions):
     # First make sure that the directions are normalized
     dirs = np.array([v/np.linalg.norm(v) for v in directions])
